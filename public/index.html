@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"
+        integrity="sha512-9mpsATI0KClwt+xVZfbcf2lJ8IFBAwsubJ6mI3rtULwyM3fBmQFzj0It4tGqxLOGQwGfJdk/G+fANnxfq9/cew=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+          }
+        }
+      </script>
+    <script type="module">
+        import { io } from "socket.io-client";
+
+        const socket = io("http://127.0.0.1:3000/", {
+            transports: ["websocket"]
+        });
+
+        // const socket = io("https://react-socket-server-tjms.herokuapp.com/", {
+        //     transports: ["websocket"]
+        // });
+        socket.on('connect', () => {
+            mensajes.innerHTML += `<li> estas conectado con: ${socket.id} </li>`; //aumenta en el UL con id mensajes
+        });
+
+        //socket.emit('datos-para-servidor', 1, 'hola', {data: 'data'});
+
+
+        const formulario = document.querySelector('#miFormulario');
+        const mensajes = document.querySelector('#misMensajes');
+        const txtmensajes = document.querySelector('#message-input');
+        const txtroom = document.querySelector('#room-input');
+
+        const joinbutton = document.querySelector('#join-button');
+
+
+        joinbutton.addEventListener('click', (evento) => {
+            const txtroom = document.querySelector('#room-input');
+            const room = txtroom.value;
+            socket.emit('join-room', room);
+            txtroom.value = "";
+            //room es el socket id
+        });
+
+
+
+        formulario.addEventListener('submit', (evento) => {
+            evento.preventDefault();
+
+            const nuevoMensaje = txtmensajes.value;
+            const room = txtroom.value;
+
+
+           // socket.emit('mensaje-para-servidor', nuevoMensaje, room); // lo emite el cliente al servidor
+            mensajes.innerHTML += `<li>${nuevoMensaje}</li>`; //aumenta en el UL con id mensajes
+            txtmensajes.value = "";
+        });
+
+
+        socket.on('mensaje-recibido', (mensaje) => { //el cliente escucha lo que emite el servidor
+            console.log(mensaje);
+            mensajes.innerHTML += `<li>${mensaje}</li>`; //aumenta en el UL con id mensajes
+        });
+
+    </script>
+</head>
+
+<body>
+
+    <form id="miFormulario">
+        <input type="text" id="message-input" placeholder="mensaje">
+        <input type="text" id="room-input"placeholder="sala">
+        <button type="submit" id="send-button">Enviar</button>
+    </form>
+    <button type="button" id="join-button">join</button>
+
+    <div class="row">
+        <div class="col">
+            <ul id="misMensajes" class="mt-2">
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
