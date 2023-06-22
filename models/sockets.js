@@ -40,7 +40,7 @@ class Sockets {
 
             // Movimientos en el paper
             socket.on('diagram', (prueba, room) => {
-                console.log(prueba);
+                //console.log(prueba);
                 this.io.to(room).emit('return-diagram', prueba);
             });
 
@@ -59,13 +59,13 @@ class Sockets {
                     if (!existRoom(this.users, room)) {
                         //axios.post('http://3.87.74.141/api/updateDiagram', {
                             
-                        axios.post('http://localhost:8000/api/updateDiagram', {
+                        /* axios.post('http://localhost:8000/api/updateDiagram', {
                             "diagram_id": room,
                         }).then((response) => {
                             console.log(response.data);
                         }).catch((error) => {
                             console.log(error);
-                        })
+                        }) */
                     }
 
 
